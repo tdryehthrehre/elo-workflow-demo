@@ -15,5 +15,17 @@ services:
       timeout: 5s
       retries: 5
 
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/elodemo
+      SPRING_DATASOURCE_USERNAME: elodemo
+      SPRING_DATASOURCE_PASSWORD: elodemo
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   pgdata:

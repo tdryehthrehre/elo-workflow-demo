@@ -1,14 +1,37 @@
 # elo-workflow-demo
 
+[![CI](https://github.com/tdryehthrehre/elo-workflow-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/tdryehthrehre/elo-workflow-demo/actions/workflows/ci.yml)
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.org/projects/jdk/17/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green.svg)](https://spring.io/projects/spring-boot)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A self-contained Java prototype exploring the core concepts of Enterprise Content Management (ECM),
 inspired by the architecture of [ELO Digital Office](https://www.elo.com).
 
-Built as a hands-on learning project to understand ECM fundamentals before working with
-production systems like ELO.
+Built as a hands-on learning project to understand ECM fundamentals — Sord hierarchy, Mask-based
+typing, keyword-list controlled vocabularies, stateful workflow routing, and audit trails — before
+working with production ELO systems.
 
 > **Note:** This is an independent prototype — not affiliated with ELO Digital Office GmbH.
 > Terminology is inspired by the public [ELO Indexserver API documentation](https://docs.elo.com),
 > but all code is original.
+
+---
+
+## Table of Contents
+
+- [What this demonstrates](#what-this-demonstrates)
+- [Architecture](#architecture)
+- [Workflow state machine](#workflow-state-machine)
+- [Tech stack](#tech-stack)
+- [Quick start](#quick-start)
+- [Running tests](#running-tests)
+- [API overview](#api-overview)
+- [End-to-end example](#end-to-end-example)
+- [Roadmap](#roadmap)
+- [AI Engineering note](#ai-engineering-note)
+
+---
 
 ## What this demonstrates
 
@@ -20,6 +43,8 @@ production systems like ELO.
 | **Workflow nodes** | `WFNode` with `WFStatus` state machine (INCOMING → REVIEW → APPROVAL → ARCHIVE) |
 | **Audit trail** | Immutable `WFTransition` records per status change |
 | **REST API** | Spring Boot controllers with OpenAPI/Swagger documentation |
+
+---
 
 ## Architecture
 
@@ -44,6 +69,8 @@ graph TD
     end
 ```
 
+---
+
 ## Workflow state machine
 
 ```
@@ -53,34 +80,59 @@ INCOMING ──► REVIEW ──► APPROVAL ──► ARCHIVE
                APPROVAL ──► REVIEW  (send back for re-review)
 ```
 
+Every transition is recorded as an immutable `WFTransition` entry (performer, timestamp, comment),
+matching the audit-trail semantics of production ELO installations.
+
+---
+
 ## Tech stack
 
-- **Java 17**, **Spring Boot 3.2**
-- **PostgreSQL 16** (production), **H2** (tests)
-- **Spring Data JPA** + **Flyway** migrations
-- **springdoc-openapi** (Swagger UI at `/swagger-ui`)
-- **JUnit 5** + **AssertJ** + **MockMvc**
-- **Maven**
+| Layer | Technology |
+|-------|-----------|
+| Language | Java 17 |
+| Framework | Spring Boot 3.2 |
+| Persistence | Spring Data JPA, PostgreSQL 16, Flyway migrations |
+| API docs | springdoc-openapi (Swagger UI at `/swagger-ui`) |
+| Testing | JUnit 5, AssertJ, MockMvc, H2 in-memory |
+| Build | Maven 3.9+ |
+
+---
 
 ## Quick start
 
 **Prerequisites:** Docker, Java 17+, Maven 3.9+
 
 ```bash
+# Clone the repo
+git clone https://github.com/tdryehthrehre/elo-workflow-demo.git
+cd elo-workflow-demo
+
 # Start PostgreSQL
 docker compose up -d postgres
 
 # Run the application
 ./mvnw spring-boot:run
-
-# Swagger UI
-open http://localhost:8080/swagger-ui
 ```
 
-**Run tests** (uses H2 in-memory, no Docker needed):
+The application starts on `http://localhost:8080`.
+Swagger UI is available at `http://localhost:8080/swagger-ui`.
+
+---
+
+## Running tests
+
+Tests use an H2 in-memory database — no Docker or external services needed:
+
 ```bash
 ./mvnw test
 ```
+
+The test suite covers:
+- Domain service unit tests (state-machine guard assertions)
+- REST layer integration tests via MockMvc (13 tests, all green)
+- Flyway migration validation
+
+---
 
 ## API overview
 
@@ -96,7 +148,9 @@ open http://localhost:8080/swagger-ui
 | `PUT` | `/api/workflow/{nodeId}/transition` | Transition workflow status |
 | `GET` | `/api/workflow?status=REVIEW` | List workflows by status |
 
-### Example: create a document and run it through the workflow
+---
+
+## End-to-end example
 
 ```bash
 # 1. Create document
@@ -125,16 +179,33 @@ curl -X PUT http://localhost:8080/api/workflow/1/transition \
   -d '{"targetStatus": "ARCHIVE", "performedBy": "manager", "comment": "Filed Q4/2024"}'
 ```
 
+---
+
+## Roadmap
+
+Planned next features — tracked as [GitHub Issues](https://github.com/tdryehthrehre/elo-workflow-demo/issues):
+
+- [ ] **ACL system** — per-Sord access control with user/group permissions and inheritance, mirroring ELO's bit-mask rights model
+- [ ] **Document versioning** — `SordVersion` entity with major/minor versioning and rollback
+- [ ] **Full-text search** — PostgreSQL `tsvector`/`tsquery` with German stemming and GIN index
+- [ ] **Spring Security + JWT** — Bearer-token auth integrated with ACL layer
+- [ ] **Workflow templates** — editable step/transition model instead of hard-coded state machine
+- [ ] **Dockerfile + full compose** — single `docker compose up` to start app + DB
+
+---
+
+## AI Engineering note
+
+This project was developed with AI pair-programming tools to accelerate implementation.
+Domain modelling, architecture decisions, and the ELO concept mapping are the author's own work;
+AI assistance was used for implementation speed and boilerplate reduction.
+
+---
+
 ## Inspired by
 
 - [ELO Indexserver API Documentation](https://docs.elo.com) — public API reference
 - ELO ECM Suite — commercial document management system by ELO Digital Office GmbH
-
-## AI Engineering note
-
-This project was developed with [Claude Code](https://claude.ai/code) as an AI pair-programming
-tool. The architecture decisions, domain modelling, and ELO concept mapping are the author's own;
-Claude assisted with implementation speed and boilerplate reduction.
 
 ## License
 
