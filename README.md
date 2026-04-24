@@ -1,6 +1,6 @@
 # elo-workflow-demo
 
-[![CI](https://github.com/tdryehthrehre/elo-workflow-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/tdryehthrehre/elo-workflow-demo/actions/workflows/ci.yml)
+[![CI](https://github.com/erikschwob/elo-workflow-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/erikschwob/elo-workflow-demo/actions/workflows/ci.yml)
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green.svg)](https://spring.io/projects/spring-boot)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -104,7 +104,7 @@ matching the audit-trail semantics of production ELO installations.
 
 ```bash
 # Clone the repo
-git clone https://github.com/tdryehthrehre/elo-workflow-demo.git
+git clone https://github.com/erikschwob/elo-workflow-demo.git
 cd elo-workflow-demo
 
 # Start PostgreSQL
@@ -183,7 +183,7 @@ curl -X PUT http://localhost:8080/api/workflow/1/transition \
 
 ## Roadmap
 
-Planned next features — tracked as [GitHub Issues](https://github.com/tdryehthrehre/elo-workflow-demo/issues):
+Planned next features — tracked as [GitHub Issues](https://github.com/erikschwob/elo-workflow-demo/issues):
 
 - [ ] **ACL system** — per-Sord access control with user/group permissions and inheritance, mirroring ELO's bit-mask rights model
 - [ ] **Document versioning** — `SordVersion` entity with major/minor versioning and rollback
