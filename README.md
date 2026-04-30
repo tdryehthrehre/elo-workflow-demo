@@ -185,9 +185,9 @@ curl -X PUT http://localhost:8080/api/workflow/1/transition \
 
 Planned next features — tracked as [GitHub Issues](https://github.com/erikschwob/elo-workflow-demo/issues):
 
-- [ ] **ACL system** — per-Sord access control with user/group permissions and inheritance, mirroring ELO's bit-mask rights model
+- [x] **ACL system** — per-Sord access control with user/group permissions and inheritance, mirroring ELO's bit-mask rights model
+- [x] **Full-text search** — PostgreSQL `tsvector`/`tsquery` with German stemming and GIN index; `plainto_tsquery` ranked by `ts_rank`
 - [ ] **Document versioning** — `SordVersion` entity with major/minor versioning and rollback
-- [ ] **Full-text search** — PostgreSQL `tsvector`/`tsquery` with German stemming and GIN index
 - [ ] **Spring Security + JWT** — Bearer-token auth integrated with ACL layer
 - [ ] **Workflow templates** — editable step/transition model instead of hard-coded state machine
 - [ ] **Dockerfile + full compose** — single `docker compose up` to start app + DB

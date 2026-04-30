@@ -72,6 +72,6 @@ public class SordService {
 
     @Transactional(readOnly = true)
     public List<Sord> search(String term) {
-        return sordRepository.searchByDescription(term);
+        return sordRepository.searchByFullText(term);
     }
 }
